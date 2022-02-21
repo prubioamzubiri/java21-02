@@ -14,15 +14,7 @@ public class MySQLDB implements IDB {
             Class.forName("com.mysql.jdbc.Driver");
             conn=DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/escuela","root","1234");
 
-            Statement stmt = conn.createStatement();
-            String sql = "CREATE TABLE   ALUMNO " +
-                         "(id INTEGER not NULL, " +
-                         " nombre VARCHAR(255), " +
-                         " apellido VARCHAR(255), " +
-                         " edad INTEGER, " +
-                         " PRIMARY KEY ( id ))";
-            stmt.executeUpdate(sql);
-            stmt.close();
+
 
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
@@ -32,10 +24,32 @@ public class MySQLDB implements IDB {
     }
 
     @Override
+    public void init() {
+        
+        Statement stmt;
+        try {
+            stmt = conn.createStatement();
+            String sql = "CREATE TABLE   ALUMNO " +
+                "(id INTEGER not NULL, " +
+                " nombre VARCHAR(255), " +
+                " apellido VARCHAR(255), " +
+                " edad INTEGER, " +
+                " PRIMARY KEY ( id ))";
+            stmt.executeUpdate(sql);
+            stmt.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        
+    }
+
+    @Override
     public void addAlumno(Alumno a) {
         
-        String sql ="INSERT INTO ALUMNO" +
-                    "VALUES (" + a.getId() +"," + a.getName() + "," + a.getApellido() + "," + a.getEdad() +");";
+        String sql ="INSERT INTO ALUMNO " +
+                    "VALUES (" + a.getId() +", '" + a.getName() + "', '" + a.getApellido() + "', " + a.getEdad() +");";
         
         Statement stmt;
         try {
@@ -52,9 +66,9 @@ public class MySQLDB implements IDB {
     }
 
     @Override
-    public Alumno getAlumno() {
+    public Alumno getAlumno(int ident) {
 
-        String sql = "SELECT id, first, last, age FROM Registration";
+        String sql = "SELECT * FROM ALUMNO WHERE id="+ ident;
         ResultSet rs = null;
         Alumno a = null;
 
@@ -101,6 +115,27 @@ public class MySQLDB implements IDB {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void deleteAlumno(int ide) {
+        
+         String sql ="DELETE FROM ALUMNO " +
+                    "WHERE id =" + ide +";";
+        
+        Statement stmt;
+        try {
+            stmt = conn.createStatement();
+            stmt.execute(sql);
+            stmt.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        
+    }
+
+
 
  
 
